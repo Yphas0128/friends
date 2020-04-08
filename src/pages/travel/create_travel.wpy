@@ -1,0 +1,292 @@
+<style lang="less">
+  page{
+    padding: 0rpx;
+    background: white;
+  }
+
+  .page-body{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-top: -13rpx;
+  }
+
+  .page-section-gap{
+    box-sizing: border-box;
+    border-bottom-style:solid;
+    border-width:1rpx;
+    border-color: gainsboro;
+  }
+
+
+  /** 内容样式 **/
+  .step-content .today-step{
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-right-style:solid;
+    border-width:1rpx;
+    border-color: darkgray;
+  }
+
+  .step-content .total-step{
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .step-content .step{
+    font-size: 50rpx;
+  }
+
+  .content-container{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    background: white;
+    align-items: center;
+    margin-top: 5rpx;
+  }
+
+  .content-container .content{
+    width: 95%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .content-container .item{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+  }
+
+  .item .left{
+    width: 15%;
+    padding-top: 30rpx;
+    padding-bottom: 30rpx;
+    display: flex;
+    flex-direction: column;
+    border-right-style:solid;
+    border-width:1rpx;
+    border-color: #66CDAA;
+    justify-content: center;
+  }
+
+  .left .date{
+    position: absolute;
+    left: 62rpx;
+    background: #66CDAA;
+    color: white;
+    font-size: 25rpx;
+    padding-top: 5rpx;
+    padding-bottom: 5rpx;
+    padding-left: 15rpx;
+    padding-right: 15rpx;
+    border-radius: 10rpx;
+  }
+
+  .left .travel-start{
+    background: red;
+  }
+
+  .item .right{
+    width: 85%;
+    padding-left: 100rpx;
+    padding-top: 30rpx;
+    padding-bottom: 30rpx;
+    display: flex;
+    flex-direction: row;
+  }
+
+  .right .travel-log{
+    width: 100%;
+    background: #E6E6E6;
+    display: flex;
+    flex-direction: column;
+    color: gray;
+    font-size: 35rpx;
+    border-radius: 10rpx;
+    padding-right: 5rpx;
+  }
+
+  .travel-log .address{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding-top: 10rpx;
+    padding-bottom: 10rpx;
+    padding-left: 20rpx;
+    padding-right: 20rpx;
+  }
+
+  .address .address-label{
+    font-size: 30rpx;
+  }
+
+
+  /**post css**/
+
+  .post-container{
+    width: 95%;
+    display: flex;
+    flex-direction: row;
+    padding: 15rpx;
+    justify-content: space-around;
+  }
+
+  .post {
+    display: flex;
+    flex-direction: row;
+    background: #FF6347;
+    color: white;
+    font-size: 30rpx;
+    padding-top: 10rpx;
+    padding-bottom: 10rpx;
+    padding-left: 20rpx;
+    padding-right: 20rpx;
+    border-radius: 10rpx;
+    justify-content: center;
+  }
+
+  /** 提示样式 **/
+  .tips-container{
+    width: 100%;
+    height: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    bottom: 1rpx;
+    margin-top: 150rpx;
+  }
+
+  .tips-content{
+    background: white;
+    width: 90%;
+    height: 460rpx;
+    border-radius: 10rpx;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .item-rule{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .travel-world{
+    font-size: 40rpx;
+    color: #FF6347;
+  }
+
+  .title{
+    width: 100%;
+    text-align: center;
+    padding-top: 10rpx;
+  }
+
+  .tips-teim{
+    font-size: 30rpx;
+    padding-left: 10rpx;
+    padding-right: 10rpx;
+    justify-content: center;
+  }
+
+  .tips-content image{
+    width: 50rpx;
+    height: 50rpx;
+    position: absolute;
+    right: 40rpx;
+  }
+</style>
+<template>
+  <view class="page-body">
+    <view class="page-section page-section-gap">
+      <map
+        id="myMap"
+        style="width: 100%; height: 550rpx;"
+        latitude="{{latitude}}"
+        longitude="{{longitude}}"
+        markers="{{markers}}"
+        include-points="{{includePoints}}"
+        polyline="{{polyline}}"
+        show-location>
+      </map>
+    </view>
+
+    <!-- 具体步数内容 -->
+    <view class='content-container'>
+      <view class='content'>
+        <view class='post-container'>
+          <view class='post' @tap='chooseLocation'>
+            <view>添加旅行站点</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class='tips-container' wx:if="{{plans.length <= 0}}">
+      <view class='tips-content'>
+        <view class='title'>规则</view>
+        <view class='item-rule tips-teim'>
+          <view> 用您的</view>
+          <view class='travel-world'>微信步数</view>
+          <view>来一次</view>
+          <view class='travel-world'>虚拟旅行</view>
+          <view>吧</view>
+        </view>
+        <view class='item-a tips-teim'>1.制定旅行线路后会根据您每天的微信运动步数进行旅行行走。</view>
+        <view class='item-b tips-teim'>2.首次旅行系统会使用您最近三十天的步数进行旅行，步数使用后将不能被再次使用。</view>
+        <view class='item-b tips-teim'>3.每当旅行到一个地方，您的步数会把它住的酒店、吃的美食和游玩的景点以日记的形式记录下来。</view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    export default class Index extends wepy.page {
+      config = {
+        navigationBarTitleText: '新建线路'
+      }
+      components = {
+      }
+      data = {
+        latitude: 0,
+        longitude: 0,
+        markers: [],
+        includePoints: [],
+        polyline: [],
+        plans: []
+      }
+      computed = {
+      }
+      methods = {
+        chooseLocation() {
+        },
+        getload(that) {
+          wepy.getLocation({
+            type: 'wgs84',
+            isHighAccuracy: 'true',
+            success: res => {
+              that.latitude = res.latitude
+              that.longitude = res.longitude
+              that.includePoints.push({
+                longitude: that.longitude,
+                latitude: that.latitude
+              })
+              that.$apply() // 这句不加显示不出来
+            }
+          })
+        }
+      }
+      onLoad() {
+        this.methods.getload(this)
+      }
+    }
+</script>

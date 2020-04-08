@@ -1,0 +1,205 @@
+<style lang="less">
+  page{
+    background-color: #F5F5F5;
+    display: flex;
+    flex-direction: column;
+  }
+  .container{
+    display: flex;
+    flex-direction: column;
+  }
+  .switch-container{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 50rpx 0rpx;
+    color: white;
+    background: #66CDAA;
+    font-size: 40rpx;
+  }
+
+  .switch-container .selected{
+    height: 1rpx;
+    width: 100%;
+    border-bottom-style:solid;
+    border-width:1rpx;
+    border-color: white;
+    padding-top: 10rpx;
+  }
+  .page-body{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .harf-View{
+    width: 100%;
+    height: 550rpx;
+  }
+  //图标按钮样式
+  .icon-container{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #FF6347;
+  }
+  .icon-container .icon{
+    width: 95%;
+    display: flex;
+    flex-direction: row;
+    padding-top:15rpx;
+    padding-bottom: 15rpx;
+    justify-content: space-between;
+  }
+
+  .content-container{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    background: white;
+    align-items: center;
+    margin-top: 5rpx;
+  }
+  .content-container .content{
+    width: 95%;
+    display: flex;
+    flex-direction: column;
+  }
+  /**post css**/
+
+  .post-container{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 40rpx 0rpx;
+  }
+
+  .post {
+    width: 80%;
+    display: flex;
+    flex-direction: row;
+    background: #FF6347;
+    color: white;
+    font-size: 30rpx;
+    border-radius: 10rpx;
+    justify-content: center;
+    padding: 20rpx 0rpx;
+  }
+</style>
+<template>
+  <view class="container">
+    <view class='switch-container'>
+      <view bindtap="selected" data-type="1">
+        <view>旅行</view>
+        <view class='line'></view>
+      </view>
+      <view bindtap="selected" data-type="2">
+        <view>步数</view>
+        <view class='line'></view>
+      </view>
+    </view>
+
+    <view class="page-body" >
+      <map
+        id="map"
+        class='harf-View'
+        longitude="{{longitude}}"
+        latitude="{{latitude}}"
+        include-points="{{includePoints}}"
+        bindcontroltap="controltap"
+        markers="{{markers}}"
+        bindmarkertap="markertap"
+        polyline="{{polyline}}"
+        bindregionchange="regionchange"
+        show-location>
+      </map>
+    </view>
+    <view class='icon-container' wx:if="{{!showPostPlan}}">
+      <view class='icon'>
+        <image src='/image/add-image1.png' bindtap='createTravel'></image>
+        <image src='/image/show-label.png' bindtap='ifShowTravelLabel'></image>
+        <image src='/image/report.png' bindtap='getReport'></image>
+        <image src='/image/not-location.png' bindtap='ifShowTravelLocation'></image>
+        <image src='/image/all-view.png' bindtap='changeView'></image>
+      </view>
+    </view>
+    <view wx:if="{{showMap}}" class='content-container'>
+      <view class='content'>
+        <view class='post-container' @tap='createTravel' wx:if="{{showPostPlan}}">
+          <view class='post'>
+            <view>制定旅行线路</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class Index extends wepy.page {
+    config = {
+      navigationBarTitleText: ''
+    }
+    components = {
+    }
+    data = {
+      mapView: 1,
+      longitude: 0, // 中心经度
+      latitude: 0, // 中心纬度
+      markers: [], // 标记点
+      includePoints: [], // 缩放视野以包含所有给定的坐标点
+      polyline: [{
+        points: [],
+        color: '#FF0000DD',
+        width: 2,
+        dottedLine: true
+      }], // 路线
+      showPostPlan: true,
+      showMap: true
+    }
+    computed = {
+    }
+    methods = {
+      createTravel() {
+        wepy.navigateTo({
+          url: '/pages/travel/create_travel',
+          events: {},
+          success: function (rs) {
+          }
+        })
+      },
+      regionchange() {
+        // 视野发生变化时触发
+      },
+      controltap() {
+      //  点击 控件时触发
+      },
+      markertap() {
+      // 点击标记点触发
+      },
+      getLocations(that) {
+        wepy.getLocation({
+          type: 'wgs84',
+          isHighAccuracy: 'true',
+          success: res => {
+            that.latitude = res.latitude
+            that.longitude = res.longitude
+            that.includePoints.push({
+              longitude: that.longitude,
+              latitude: that.latitude
+            })
+            that.$apply() // 这句不加显示不出来
+          }
+        })
+      }
+    }
+    onLoad () {
+      var that = this
+      this.methods.getLocations(that)
+    }
+  }
+</script>
